@@ -14,8 +14,8 @@
 // Whynter A/C ARC-110WD added by Francesco Meschia
 //******************************************************************************
 
-#ifndef IRremoteint_h
-#define IRremoteint_h
+#ifndef AIR_IRremoteint_h
+#define AIR_IRremoteint_h
 
 /*
  * Activate this line if your receiver has an external output driver transistor / "inverted" output
@@ -28,7 +28,7 @@
 #include <Arduino.h>
 
 // All board specific stuff have been moved to its own file, included here.
-#include "IRremoteBoardDefs.h"
+#include "AIR_IRremoteBoardDefs.h"
 
 //------------------------------------------------------------------------------
 // Information for the Interrupt Service Routine
