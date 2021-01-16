@@ -61,7 +61,7 @@
  * If defined, denotes pin number of LED that should be blinked during IR reception.
  * Leave undefined to disable blinking.
  */
-#define BLINKLED        LED_BUILTIN
+//#define BLINKLED        LED_BUILTIN
 
 /**
  * Board dependent macro to turn BLINKLED on.
@@ -78,75 +78,11 @@
 
 // Do not define anything.
 
-#elif defined(CORE_LED0_PIN)
-#define BLINKLED        CORE_LED0_PIN
-#define BLINKLED_ON()   (digitalWrite(CORE_LED0_PIN, HIGH))
-#define BLINKLED_OFF()  (digitalWrite(CORE_LED0_PIN, LOW))
-
-// Sparkfun Pro Micro is __AVR_ATmega32U4__ but has different external circuit
-#elif defined(ARDUINO_AVR_PROMICRO)
-// We have no built in LED -> reuse RX LED
-#define BLINKLED        LED_BUILTIN_RX
-#define BLINKLED_ON()   RXLED1
-#define BLINKLED_OFF()  RXLED0
-
-// Arduino Leonardo + others
-#elif defined(__AVR_ATmega32U4__)
-#define BLINKLED        LED_BUILTIN
-#define BLINKLED_ON()   (PORTC |= B10000000)
-#define BLINKLED_OFF()  (PORTC &= B01111111)
-
-#elif defined(__AVR_ATmega32U4__) || defined(__AVR_ATmega8U2__) || defined(__AVR_ATmega16U2__)  || defined(__AVR_ATmega32U2__)
-#define BLINKLED        LED_BUILTIN
-#define BLINKLED_ON()   (digitalWrite(LED_BUILTIN, HIGH))
-#define BLINKLED_OFF()  (digitalWrite(LED_BUILTIN, LOW))
-
 // Arduino Uno, Nano etc (previously default clause)
 #elif defined(__AVR_ATmega328P__) || defined(__AVR_ATmega328PB__) || defined(__AVR_ATmega168__)
 #define BLINKLED        LED_BUILTIN
 #define BLINKLED_ON()  (PORTB |= B00100000)
 #define BLINKLED_OFF()  (PORTB &= B11011111)
-
-#elif defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
-#define BLINKLED        13
-#define BLINKLED_ON()   (PORTB |= B10000000)
-#define BLINKLED_OFF()  (PORTB &= B01111111)
-
-#elif defined(__AVR_ATmega644P__) || defined(__AVR_ATmega644__)
-#define BLINKLED        0
-#define BLINKLED_ON()   (PORTD |= B00000001)
-#define BLINKLED_OFF()  (PORTD &= B11111110)
-
-// Nano Every, Uno WiFi Rev2, nRF5 BBC MicroBit, Nano33_BLE
-#elif defined(__AVR_ATmega4809__) || defined(NRF5) || defined(ARDUINO_ARCH_NRF52840) || defined(__AVR_ATtiny84__) || defined(__AVR_ATtiny85__)
-#define BLINKLED        LED_BUILTIN
-#define BLINKLED_ON()   (digitalWrite(BLINKLED, HIGH))
-#define BLINKLED_OFF()  (digitalWrite(BLINKLED, LOW))
-
-// Arduino Zero
-#elif defined(ARDUINO_ARCH_SAMD)
-#define BLINKLED        LED_BUILTIN
-#define BLINKLED_ON()   (digitalWrite(LED_BUILTIN, HIGH))
-#define BLINKLED_OFF()  (digitalWrite(LED_BUILTIN, LOW))
-
-#define USE_SOFT_SEND_PWM
-// Define to use spin wait instead of delayMicros()
-//#define USE_SPIN_WAIT
-// Supply own enableIRIn()
-#undef USE_DEFAULT_ENABLE_IR_IN
-
-#elif defined(ESP32)
-// No system LED on ESP32, disable blinking by NOT defining BLINKLED
-
-// Supply own enableIRIn() and enableIROut()
-#undef USE_DEFAULT_ENABLE_IR_IN
-#undef USE_DEFAULT_ENABLE_IR_OUT
-
-#elif defined(PARTICLE)
-
-#define BLINKLED       D7
-#define BLINKLED_ON()  digitalWrite(BLINKLED,1)
-#define BLINKLED_OFF() digitalWrite(BLINKLED,0)
 
 #else
 #warning No blinking definition found. Check IRremoteBoardDefs.h.
@@ -188,190 +124,9 @@
 //#define IR_USE_TIMER2     // tx = pin 3
 #  endif
 
-// Arduino Mega
-#elif defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
-#  if !defined(IR_USE_TIMER1) && !defined(IR_USE_TIMER2) && !defined(IR_USE_TIMER3) && !defined(IR_USE_TIMER4) && !defined(IR_USE_TIMER5)
-//#define IR_USE_TIMER1   // tx = pin 11
-#define IR_USE_TIMER2     // tx = pin 9
-//#define IR_USE_TIMER3   // tx = pin 5
-//#define IR_USE_TIMER4   // tx = pin 6
-//#define IR_USE_TIMER5   // tx = pin 46
-#  endif
-
-// Leonardo
-#elif defined(__AVR_ATmega32U4__) && ! defined(TEENSYDUINO) && ! defined(ARDUINO_AVR_PROMICRO)
-#  if !defined(IR_USE_TIMER1) && !defined(IR_USE_TIMER3) && !defined(IR_USE_TIMER4_HS)
-//#define IR_USE_TIMER1     // tx = pin 9
-#define IR_USE_TIMER3       // tx = pin 5
-//#define IR_USE_TIMER4_HS  // tx = pin 13
-#  endif
-
-// ATmega8U2, ATmega16U2, ATmega32U2
-#elif defined(__AVR_ATmega8U2__) || defined(__AVR_ATmega16U2__)  || defined(__AVR_ATmega32U2__)
-#  if !defined(IR_USE_TIMER1)
-    #define IR_USE_TIMER1     // tx = pin C6
-#endif
-
-// Nano Every, Uno WiFi Rev2
-#elif defined(__AVR_ATmega4809__)
-#  if !defined(IR_USE_TIMER_4809_1) && !defined(IR_USE_TIMER_4809_2)
-#define IR_USE_TIMER_4809_1     //  tx = pin 24
-//#define IR_USE_TIMER_4809_2     // Not yet implemented tx = pin 21
-#  endif
-
-/*********************
- * Plain AVR CPU's
- *********************/
-// ATmega8u2, ATmega16U2, ATmega32U2
-#elif defined(__AVR_ATmega8U2__) || defined(__AVR_ATmega16U2__)  || defined(__AVR_ATmega32U2__)
-#  if !defined(IR_USE_TIMER1)
-    #define IR_USE_TIMER1     // tx = pin C6
-#endif
-
-// Atmega8
-#elif defined(__AVR_ATmega8__)
-#  if !defined(IR_USE_TIMER1)
-#define IR_USE_TIMER1     // tx = pin 9
-#  endif
-
-
-// ATtiny84
-#elif defined(__AVR_ATtiny84__)
-#  if !defined(IR_USE_TIMER1)
-#define IR_USE_TIMER1     // tx = pin 6
-#  endif
-
-//ATtiny85
-#elif defined(__AVR_ATtiny85__)
-#  if !defined(IR_USE_TIMER_TINY0) && !defined(IR_USE_TIMER_TINY1)
-#    if defined(TIMER_TO_USE_FOR_MILLIS) && (TIMER_TO_USE_FOR_MILLIS== 0)
-// standard ATTinyCore settings use timer 0 for millis() and micros()
-#define IR_USE_TIMER_TINY1   // tx = pin 4
-#    else
-#define IR_USE_TIMER_TINY0   // tx = pin 1
-//#define IR_USE_TIMER_TINY1   // tx = pin 4
-#    endif
-#  endif
-
-/*********************
- * SPARKFUN Boards
- *********************/
-// Sparkfun Pro Micro
-#elif defined(ARDUINO_AVR_PROMICRO)
-#  if !defined(IR_USE_TIMER1) && !defined(IR_USE_TIMER3) && !defined(IR_USE_TIMER4_HS)
-//#define IR_USE_TIMER1     // tx = pin 9
-#define IR_USE_TIMER3       // tx = pin 5
-//#define IR_USE_TIMER4_HS  // tx = pin 13
-#  endif
-
-/*********************
- * TEENSY Boards
- *********************/
-// Teensy 1.0
-#elif defined(__AVR_AT90USB162__)
-#  if !defined(IR_USE_TIMER1)
-#define IR_USE_TIMER1     // tx = pin 17
-#  endif
-
-// Teensy 2.0
-#elif defined(__AVR_ATmega32U4__) && defined(TEENSYDUINO)
-#  if !defined(IR_USE_TIMER1) && !defined(IR_USE_TIMER3) && !defined(IR_USE_TIMER4_HS)
-//#define IR_USE_TIMER1     // tx = pin 14 (Teensy 2.0 - physical pin: B5)
-#define IR_USE_TIMER3       // tx = pin 9  (Teensy 2.0 - physical pin: C6)
-//#define IR_USE_TIMER4_HS  // tx = pin 10 (Teensy 2.0 - physical pin: C7)
-#  endif
-
-// Teensy 3.0 / Teensy 3.1
-#elif defined(__MK20DX128__) || defined(__MK20DX256__) || defined(__MK64FX512__) || defined(__MK66FX1M0__)
-#  if !defined(IR_USE_TIMER_CMT)
-#define IR_USE_TIMER_CMT    // tx = pin 5
-#  endif
-
-// Teensy-LC
-#elif defined(__MKL26Z64__)
-#  if !defined(IR_USE_TIMER_TPM1)
-#define IR_USE_TIMER_TPM1 // tx = pin 16
-#  endif
-
-// Teensy++ 1.0 & 2.0
-#elif defined(__AVR_AT90USB646__) || defined(__AVR_AT90USB1286__)
-#  if !defined(IR_USE_TIMER1) && !defined(IR_USE_TIMER2) && !defined(IR_USE_TIMER3)
-//#define IR_USE_TIMER1   // tx = pin 25
-#define IR_USE_TIMER2     // tx = pin 1
-//#define IR_USE_TIMER3   // tx = pin 16
-#  endif
-
-/*********************
- * CPU's with MegaCore
- *********************/
-// MegaCore - ATmega64, ATmega128
-#elif defined(__AVR_ATmega64__) || defined(__AVR_ATmega128__) || defined(__AVR_ATmega1281__) || defined(__AVR_ATmega2560__)
-#  if !defined(IR_USE_TIMER1)
- #define IR_USE_TIMER1     // tx = pin 13
-#  endif
-
-/*********************
- * CPU's with MajorCore
- *********************/
-#elif defined(__AVR_ATmega8515__) || defined(__AVR_ATmega162__)
-#  if !defined(IR_USE_TIMER1) && !defined(IR_USE_TIMER3)
-    #define IR_USE_TIMER1     // tx = pin 13
-    //#define IR_USE_TIMER3   // tx = pin 12 - ATmega162 only
-#endif
-
-/*********************
- * CPU's with MightyCore
- *********************/
-// MightyCore - ATmega1284
-#elif defined(__AVR_ATmega1284__) || defined(__AVR_ATmega1284P__)
-#  if !defined(IR_USE_TIMER1) && !defined(IR_USE_TIMER2) && !defined(IR_USE_TIMER3)
-//#define IR_USE_TIMER1   // tx = pin 13
-#define IR_USE_TIMER2     // tx = pin 14
-//#define IR_USE_TIMER3   // tx = pin 6
-#  endif
-
-// MightyCore - ATmega164, ATmega324, ATmega644
-#elif defined(__AVR_ATmega644__) || defined(__AVR_ATmega644P__) \
-|| defined(__AVR_ATmega324P__) || defined(__AVR_ATmega324A__) \
-|| defined(__AVR_ATmega324PA__) || defined(__AVR_ATmega164A__) \
-|| defined(__AVR_ATmega164P__)
-#  if !defined(IR_USE_TIMER1) && !defined(IR_USE_TIMER2)
-//#define IR_USE_TIMER1   // tx = pin 13
-#define IR_USE_TIMER2     // tx = pin 14
-#  endif
-
-// MightyCore - ATmega8535, ATmega16, ATmega32
-#elif defined(__AVR_ATmega8535__) || defined(__AVR_ATmega16__) || defined(__AVR_ATmega32__)
-#  if !defined(IR_USE_TIMER1)
-#define IR_USE_TIMER1     // tx = pin 13
-#  endif
-
 /*********************
  * OTHER CPU's
  *********************/
-#elif defined(ESP32)
-#  if !defined(IR_USE_TIMER_ESP32)
-#define IR_USE_TIMER_ESP32
-#  endif
-
-#elif defined(ARDUINO_ARCH_SAMD)
-#define TIMER_PRESCALER_DIV 64
-
-#elif defined(NRF5) // nRF5 BBC MicroBit
-// It uses Timer2 so you cannot use the Adafruit_Microbit display driver
-// Sending not implemented
-#undef SENDING_SUPPORTED
-
-// Supply own enbleIRIn
-#undef USE_DEFAULT_ENABLE_IR_IN
-
-/*********************
- * Particle Boards
- *********************/
-#elif defined(PARTICLE)
-  #define IR_USE_TIMER_PARTICLE
-  #define SYSCLOCK 16000000
-
 #else
 // Arduino Duemilanove, Diecimila, LilyPad, Mini, Fio, Nano, etc
 // ATmega48, ATmega88, ATmega168, ATmega328
@@ -552,23 +307,6 @@ static void timerConfigForReceive() {
 //-----------------
 #  if defined(CORE_OC1A_PIN)
 #define IR_SEND_PIN  CORE_OC1A_PIN  // Teensy
-
-#  elif defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
-#define IR_SEND_PIN  11             // Arduino Mega
-
-#  elif defined(__AVR_ATmega1284__) || defined(__AVR_ATmega1284P__) \
-|| defined(__AVR_ATmega644__) || defined(__AVR_ATmega644P__) \
-|| defined(__AVR_ATmega324P__) || defined(__AVR_ATmega324A__) \
-|| defined(__AVR_ATmega324PA__) || defined(__AVR_ATmega164A__) \
-|| defined(__AVR_ATmega164P__) || defined(__AVR_ATmega32__) \
-|| defined(__AVR_ATmega16__) || defined(__AVR_ATmega8535__) \
-|| defined(__AVR_ATmega64__) || defined(__AVR_ATmega128__) \
-|| defined(__AVR_ATmega1281__) || defined(__AVR_ATmega2561__) \
-|| defined(__AVR_ATmega8515__) || defined(__AVR_ATmega162__)
-#define IR_SEND_PIN  13             // MightyCore, MegaCore, MajorCore
-
-#  elif defined(__AVR_ATtiny84__)
-# define IR_SEND_PIN  6
 
 #  else
 #define IR_SEND_PIN  9              // Arduino Duemilanove, Diecimila, LilyPad, Sparkfun Pro Micro, Leonardo etc.
