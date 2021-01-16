@@ -1,18 +1,21 @@
 {
-  "name": "IRremote",
+  "name": "AIR_IRremote",
   "keywords": "infrared, ir, remote",
   "description": "Send and receive infrared signals with multiple protocols",
   "repository":
   {
     "type": "git",
-    "url": "https://github.com/z3t0/Arduino-IRremote.git"
+    "url": "https://github.com/AnalysIR/AIR_IRremote.git"
   },
-  "version": "2.9.0",
+  "version": "2.9.1",
   "frameworks": "arduino",
   "platforms": "atmelavr",
   "authors" :
   [
      {
+       "name":"AnalysIR",
+       "email":"info@AnalysIR.com"
+     },     {
        "name":"Armin Joachimsmeyer",
        "email":"armin.arduino@gmail.com"
      },
